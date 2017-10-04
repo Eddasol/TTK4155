@@ -21,6 +21,14 @@ void interrupt_init(){
 	sei();
 }
 
+int button_pressed(){
+
+	if(!(PINB & (1 << PINB1))){
+		return 1;
+	}
+	return 0;
+}
+
 int read_x(char *ADC_ptr){
 	ADC_ptr[0]=0x05;
 	

@@ -17,11 +17,63 @@
 #include "adc.h"
 #include "oled.h"
 #include "sram.h"
-
+#include "menu.h"
 
 
 
 volatile char *ADC_ptr = (char *) 0x1400;
+
+
+/*int get_string_size(int page, int line){
+
+	int length;
+	for(int i = 0; menu_options[page][line][i] != '\0'; ++i){
+		length = i;
+	}
+	return length;
+}*/
+
+/*
+void menu(){
+	oled_reset();
+	
+	char* string[3]={"alt1  ","alt2  ","Alt3  "};
+	int lenght[3]={4,4,4};
+	int size=3;
+	for(int i =0;i<size;i++){
+		oled_write_from_start_on_line(i+1);
+		oled_write_string(string[i],lenght[i],0);
+	}
+	int invertedIndex=0;
+	int direction;
+	while(1){
+		int y=read_y(ADC_ptr);
+	if(y>10){
+		oled_write_from_start_on_line(invertedIndex+1);
+		oled_write_string(string[invertedIndex],lenght[invertedIndex],0);
+		invertedIndex=(invertedIndex-1)%size;
+		oled_write_from_start_on_line(invertedIndex+1);
+		oled_write_string(string[invertedIndex],lenght[invertedIndex],1);
+		direction=1;
+	}
+	else if(y<-10){
+		oled_write_from_start_on_line(invertedIndex+1);
+		oled_write_string(string[invertedIndex],lenght[invertedIndex],0);
+		invertedIndex=(invertedIndex+1)%size;
+		oled_write_from_start_on_line(invertedIndex+1);
+		oled_write_string(string[invertedIndex],lenght[invertedIndex],1);
+		direction=-1;
+	}
+		else{ direction=0;}
+	int delay=direction*1000/y;
+	_delay_ms(100);
+	
+	}
+*/
+
+
+
+
 
 int main(){
 	uart_init(UBRR);
@@ -32,6 +84,7 @@ int main(){
 	oled_init();
 	interrupt_init();
 	DDRE |= (1 << PE1); // Setter PE høy med tanke på latchens virkemåte
+	DDRB &= ~(1 << PB1); // skal sette PB1 som input. Knapp på joystick.
 
 	//SRAM_test();
 	
@@ -48,29 +101,23 @@ int main(){
 		}
 	}
 	int j=0;
+	int y;
+	int delay;
+	int direction;
+	int inv1=1;
+	int inv2=0;
+	int inv3=0;
+	//menu();		
 	printf("Done\r\n");
 	oled_reset();
+	
+	menu_funct();
+
+
 	while(1){
-		oled_reset();
 
-		char* str1 = "robiIN heio hie";
-		char* str2 = "arild king of karsk";
-		char* str3 = "Edda yoyoyo";
-		 
-		int size1=15;
-		int size2=19;
-		int size3=11;
 		
-		oled_write_from_start_on_line(0);
-		oled_write_string(str1,size1,0);
-		
-		oled_write_from_start_on_line(1);
-		oled_write_string(str2,size2,0);
 
-		oled_write_from_start_on_line(2);
-		oled_write_string(str3,size3,0);
-		
-		_delay_ms(1000);
 		
 		//oled_reset();
 		
