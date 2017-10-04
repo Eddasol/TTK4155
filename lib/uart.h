@@ -8,6 +8,8 @@
 
 #ifndef UART_H_
 #define UART_H_
+#define UBRR 31
+#include <avr/io.h>
 
 void uart_init(unsigned int baud);
 void uart_transmit(char c);

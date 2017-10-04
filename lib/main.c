@@ -5,28 +5,23 @@
  *  Author: eddas, robbas og arras
  */ 
 
-
+#define F_CPU 4915200UL
 #include <avr/io.h>
 #include <avr/interrupt.h>
 #include <stdlib.h>
 #include <util/delay.h>
 #include <stdio.h>
 
+
 #include "uart.h"
 #include "adc.h"
 #include "oled.h"
 #include "sram.h"
 
-#define F_CPU 4915200UL
-#define BAUD 9600
-#define UBRR 31
 
-volatile char *OLEDC_ptr = (uint8_t *) 0x1000; // Command char* before
-volatile char *OLEDD_ptr = (uint8_t *) 0x1200; // Data char* before
+
+
 volatile char *ADC_ptr = (char *) 0x1400;
-volatile char *SRAM_ptr = (char *) 0x1800;
-
-
 
 int main(){
 	uart_init(UBRR);
@@ -34,53 +29,63 @@ int main(){
 	
 	SFIOR |= (1 << XMM2);
 	MCUCR |= (1 << SRE);
-	//oled_init();
-	//interrupt_init();
-	//DDRE |= (1 << PE1); // Setter PE høy med tanke på latchens virkemåte
-					
-	//printf("Reboot\r\n");
+	oled_init();
+	interrupt_init();
+	DDRE |= (1 << PE1); // Setter PE høy med tanke på latchens virkemåte
+
+	//SRAM_test();
 	
-//	_delay_ms(10);
-	//volatile char *foo = (char *) 0x1801; // Start address for the SRAM
-
+	volatile uint8_t *oled_command = 0x1000;
+	
+	volatile uint8_t *oled_data = 0x1200;
+	
+	for(int j = 0; j < 8; j++){
+		*oled_command = 0xB0 + j;
+		*oled_command = 0x00;
+		*oled_command = 0x10;
+		for (uint32_t i = 0; i < 8*128; i++) {
+			*oled_data = 0xFF;
+		}
+	}
+	int j=0;
+	printf("Done\r\n");
+	oled_reset();
 	while(1){
-		
-		//_delay_us(1);	
+		oled_reset();
 
-		//OLEDC_ptr[0]=0;
-		//_delay_ms(1000);
-		//OLEDD_ptr[0]=0;
+		char* str1 = "robiIN heio hie";
+		char* str2 = "arild king of karsk";
+		char* str3 = "Edda yoyoyo";
+		 
+		int size1=15;
+		int size2=19;
+		int size3=11;
+		
+		oled_write_from_start_on_line(0);
+		oled_write_string(str1,size1,0);
+		
+		oled_write_from_start_on_line(1);
+		oled_write_string(str2,size2,0);
+
+		oled_write_from_start_on_line(2);
+		oled_write_string(str3,size3,0);
+		
+		_delay_ms(1000);
+		
 		//oled_reset();
-		//_delay_ms(100);
 		
-		//SRAM_test();
-		/*
-		printf("x: %d\t", read_x(ADC_ptr));
-		printf("y: %d\t",read_y(ADC_ptr));
-		//_delay_ms(100);
-		printf("left: %d\t",read_left(ADC_ptr));
-		//_delay_us(1);
-		printf("right: %d\t",read_right(ADC_ptr));
-		*/
-		//	printf("s\n");
+		//_delay_ms(1000);
+		//oled_bright();
+		//_delay_ms(1000);
 		
+/*
 		_delay_ms(1000);
-		//printf("OLEDC\n");
-		OLEDC_ptr[0]=1;
-		
-		_delay_ms(1000);
-		//printf("OLEDD\n");
-		OLEDD_ptr[0]=1;
-		
-		_delay_ms(1000);
-		//printf("SRAM\n");
-		SRAM_ptr[0]=1;
-		
-		_delay_ms(1000);
-		//printf("ADC\n");
-		ADC_ptr[0]=1;
-		
-		/*
+		volatile uint8_t *oled_data = 0x1200;
+		for (uint32_t i = 0; i < 8*128; i++) {
+			*oled_data = i;
+		}
+	*/
+	/*
 		uart_transmit('H');
 		uart_transmit('e');
 		uart_transmit('i');
@@ -123,7 +128,3 @@ int main(){
 	return 0;
 }
 
-ISR(INT2_vect){
-
-	interrupt_triggered = 1;
-}

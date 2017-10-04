@@ -8,8 +8,12 @@
 
 
 enum dir{LEFT, RIGHT, UP, DOWN, NEUTRAL};
-volatile int interrupt_triggered = 0;
 
+volatile int interrupt_triggered = 0;
+ISR(INT2_vect){
+
+	interrupt_triggered = 1;
+}
 
 void interrupt_init(){
 	GICR |= (1<<INT2);

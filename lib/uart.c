@@ -5,6 +5,11 @@
  *  Author: eddas
  */ 
 #include "uart.h"
+#include <avr/io.h>
+
+#define F_CPU 4915200UL
+#define BAUD 9600
+
 
 void uart_init(unsigned int baud){
 	

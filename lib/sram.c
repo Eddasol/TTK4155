@@ -5,6 +5,8 @@
  *  Author: eddas
  */ 
 #include "sram.h"
+volatile char *SRAM_ptr = (char *) 0x1800;
+
 
 void SRAM_test(void){
 	volatile char *ext_ram = (char *) 0x1800; // Start address for the SRAM

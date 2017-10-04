@@ -6,10 +6,15 @@
  */ 
 
 #include <avr/io.h>
+#include <avr/interrupt.h>
 
 #ifndef ADC_H_
 #define ADC_H_
 
+
+
+;
+ISR(INT2_vect);
 void interrupt_init();
 int read_x(char *ADC_ptr);
 int read_y(char *ADC_ptr);
