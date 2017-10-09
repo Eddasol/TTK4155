@@ -21,7 +21,7 @@
 
 
 
-volatile char *ADC_ptr = (char *) 0x1400;
+//volatile char *ADC_ptr = (char *) 0x1400;
 
 
 /*int get_string_size(int page, int line){
@@ -111,7 +111,7 @@ int main(){
 	printf("Done\r\n");
 	oled_reset();
 	
-	menu_funct();
+	//menu_funct();
 
 
 	while(1){

@@ -11,9 +11,64 @@
 
 #define number_of_pages 1
 #define menu_items 3
+
+volatile char *ADC_ptr = (char *) 0x1400;
 const int length=10;
 volatile char* menu_options[4] = {"Meny 1             ","arild king of karsk", "Edda er her        ", "Robin er der       "};
 int line_to_invert=1;
+/*
+void init_menu_struct(struct menu name,int numb,volatile char[10] options,struct menu next){
+	name.empt=0;
+	name.numb_options=numb;
+	name.menu_options=options;
+	name.next_element=next;
+}
+
+void init_menu_struct_empty(struct menu name, char returnString){
+	name.empt=1;
+	name.menu_options[0]=returnString;
+}
+
+*/
+
+volatile char* menu_1[3] = {"alt 1", "alt 2", "alt_3"};
+static int current_page = 0;
+static int next_page = 0;
+static int prev_page = 0;
+void goto_selected_menu_option(int menu_option_index){
+	static int current_page;
+	static int next_page;
+	static int prev_page;
+	
+	switch(menu_option_index){
+		case 1:
+			current_page = 1;
+			next_page = 0;
+			prev_page = 0;
+			show_menu_page(current_page);
+			break;
+	}
+	
+}
+
+void show_current_menu_page(int page){
+	printf("In page 1");	
+	
+}
+
+char* menu_control(int current_menu_option){
+		while(1){
+			index = menustep(current_menu.menu_options, current_menu.numb_options);
+			if (button_pressed()){
+				menu_control(current_menu.next_element[index]);
+			}
+			_delay_ms(200);
+		}
+	
+}
+
+/*
+
 
 /*
 void menu_funct(){
@@ -53,20 +108,21 @@ struct menu make_menu(){
 	return first;
 }
 */
-char* menu_control(menu current_menu){
+/*
+char* menu_control(struct menu current_menu){
 	if(current_menu.empt){
-		return current_menu.menu_options[0]
+		return current_menu.menu_options[0];
 	}
 	for (int i=0; i< current_menu.menu_options;i++){
 		oled_write_from_start_on_line(i);
 		oled_write_string(current_menu.menu_options[i],length,0);
 	}
 	oled_write_from_start_on_line(1);
-	oled_write_string(current_menu.menu_options[i],length,1);
+	oled_write_string(current_menu.menu_options[1],length,1);
 	
 	int index;
 	
-	while{
+	while(1){
 		index = menustep(current_menu.menu_options, current_menu.numb_options);
 		if (button_pressed()){
 			menu_control(current_menu.next_element[index]);
@@ -95,11 +151,12 @@ int menustep(char* menu[], int size){
 	oled_write_string(menu[line_to_invert],length,1);
 	
 	}
-	/*for(int line = 0; line < menu_items; line++){
+	/*
+	for(int line = 0; line < menu_items; line++){
 		int current_line_length = get_string_size(page,line);
 		oled_write_from_start_on_line(line);
 		(line == line_to_invert) ? oled_write_string(menu_options[0][line],current_line_length,1) : oled_write_string(menu_options[0][line],current_line_length,0);
-	}*/
-	
+	}
+	*/
 	return line_to_invert;
 }

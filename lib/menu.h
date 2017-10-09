@@ -17,8 +17,8 @@ struct menu
 {
 	int empt;
 	int numb_options;
-	volatile char* menu_options[10];
-	volatile menu* next_element[10];
+	volatile char* menu_options;
+	//volatile menu next_element[10];
 };
 
 int menustep(char* menu[], int size);
