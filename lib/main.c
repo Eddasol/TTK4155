@@ -92,7 +92,7 @@ int main(){
 	
 	volatile uint8_t *oled_data = 0x1200;
 	
-	for(int j = 0; j < 8; j++){
+	/*for(int j = 0; j < 8; j++){
 		*oled_command = 0xB0 + j;
 		*oled_command = 0x00;
 		*oled_command = 0x10;
@@ -100,25 +100,38 @@ int main(){
 			*oled_data = 0xFF;
 		}
 	}
-	int j=0;
-	int y;
-	int delay;
-	int direction;
-	int inv1=1;
-	int inv2=0;
-	int inv3=0;
+	*/
 	//menu();		
-	printf("Done\r\n");
+
+
 	oled_reset();
-	
+	oled_bright();
+	_delay_ms(1000);
+
 	menu_funct();
+	char* menu[]={"Meny      ","Edda      ","Arild     ","Robin     ","yo        ","h         ","e         ","i         "};
+	int numb_alt=8;
 
-
+	oled_reset();
+	char* str="hei";
+	for (int i=0; i< numb_alt;i++){
+		oled_write_from_start_on_line(i);
+		oled_write_string(menu[i],10,0);
+	}
+	oled_write_from_start_on_line(1);
+	oled_write_string(menu[1],10,1);
+	int index=0;
 	while(1){
-
 		
 
 		
+		index=menustep(menu,numb_alt);
+		if(button_pressed()){
+			printf("%s\n",menu[index]);
+			_delay_ms(200);
+		}
+		_delay_ms(100);		
+
 		//oled_reset();
 		
 		//_delay_ms(1000);

@@ -24,9 +24,6 @@ void uart_init(unsigned int baud){
 	//Enable receiver and transmitter:
 	UCSR0B = (1<<RXEN0) | (1<<TXEN0);
 	
-	//Set frame format: 8 data, 2 stop bit:
-	//UCSR1C = (1<<UMSEL0) | (1<<USBS1) | (1<<UCSZ00) | (1<<UCSZ01);
-	
 }
 
 void uart_transmit(char c) {

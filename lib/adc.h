@@ -11,9 +11,6 @@
 #ifndef ADC_H_
 #define ADC_H_
 
-
-
-;
 ISR(INT2_vect);
 void interrupt_init();
 int button_pressed();

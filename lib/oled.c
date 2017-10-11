@@ -8,7 +8,6 @@
 #include "oled.h"
 #include <stdlib.h>
 #include <avr/io.h>
-
 #include <avr/pgmspace.h>
 
 volatile char *OLEDC_ptr = (uint8_t *) 0x1000; // Command char* before
@@ -71,7 +70,7 @@ void oled_bright(){
 	for(int line = 0; line < 8; line++){
 		oled_write_c(0xb0+line);
 		for(int byte = 0; byte < 128; byte++){
-			OLEDD_ptr[0] = 0xfb;
+			OLEDD_ptr[0] = 0xff;
 		}
 	}
 }
