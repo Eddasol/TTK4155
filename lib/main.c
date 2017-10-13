@@ -85,6 +85,7 @@ int main(){
 	interrupt_init();
 	DDRE |= (1 << PE1); // Setter PE høy med tanke på latchens virkemåte
 	DDRB &= ~(1 << PB1); // skal sette PB1 som input. Knapp på joystick.
+	DDRB |= (1 << PB4); // Setter ChipSelect for Can Controlleren som output
 
 	//SRAM_test();
 	

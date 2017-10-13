@@ -13,6 +13,6 @@
 
 void SPI_MasterInit(void);
 void SPI_MasterTransmit(char data);
-
+void SPI_SlaveReceive(void);
 
 #endif /* SPI_H_ */

@@ -20,3 +20,8 @@ void SPI_MasterTransmit(char data){
 	While(!(SPSR & (1 << SPIF)));	//Waits for a transfer to complete, SPIF is set when a serial transfer is complete. 
 	
 }
+
+void SPI_SlaveReceive(void){
+	while(!(SPSR & (1 << SPIF)));	//Wait for receive completion
+	return SPDR;
+}
