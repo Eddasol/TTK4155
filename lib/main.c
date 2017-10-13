@@ -18,6 +18,8 @@
 #include "oled.h"
 #include "sram.h"
 #include "menu.h"
+#include "MCP2515.h"
+#include "spi.h"
 
 
 
@@ -85,13 +87,32 @@ int main(){
 	interrupt_init();
 	DDRE |= (1 << PE1); // Setter PE høy med tanke på latchens virkemåte
 	DDRB &= ~(1 << PB1); // skal sette PB1 som input. Knapp på joystick.
-	DDRB |= (1 << PB4); // Setter ChipSelect for Can Controlleren som output
-
+	
+	//SPI_MasterInit();
+	mcp2515_Init();		//SPI_MasterInit kjøres inne i mcp2515_Init().
+	_delay_ms(100);
+	printf("Arild");
+	mcp2515_BitModify(MCP_CANCTRL, MODE_LOOPBACK, 0xFF); //Should set the CAN-controller in LoopBack Mode. 0x0f is the address of CANCTRL register, 0x40 is the Loopback register value.
+	printf("Robin");
 	//SRAM_test();
 	
 	volatile uint8_t *oled_command = 0x1000;
 	
 	volatile uint8_t *oled_data = 0x1200;
+	
+	
+	while(1){
+		uint8_t mode;
+		mode = mcp2515_Read(MCP_CANSTAT);
+		mode &= 0xE0;
+		if(mode == (0x00)){
+			printf("Normal mode");
+		}
+		else if(mode == (0x40)){
+			printf("Loopback mode");
+		}
+	}
+	
 	
 	/*for(int j = 0; j < 8; j++){
 		*oled_command = 0xB0 + j;
@@ -114,7 +135,7 @@ int main(){
 	int numb_alt=8;
 
 	oled_reset();
-	char* str="hei";
+	char* str = "hei";
 	for (int i=0; i< numb_alt;i++){
 		oled_write_from_start_on_line(i);
 		oled_write_string(menu[i],10,0);
@@ -146,45 +167,6 @@ int main(){
 			*oled_data = i;
 		}
 	*/
-	/*
-		uart_transmit('H');
-		uart_transmit('e');
-		uart_transmit('i');
-		uart_transmit('\r');
-		uart_transmit('\n');
-		
-		//fdevopen(uart_transmit, uart_receive);
-		//printf("UART REC = %c\n",uart_receive());
-		PORTA |= (1 << PA0);
-		_delay_ms(100);
-		PORTA |= (1 << PA1);
-		_delay_ms(100);
-		PORTA |= (1 << PA2);
-		_delay_ms(100);
-		PORTA &= !(1 << PA0);
-		_delay_ms(100);
-		PORTA &= !(1 << PA1);
-		_delay_ms(100);
-		PORTA &= !(1 << PA2);
-		_delay_ms(100);
-		*/	
-		/*
-		//
-		//PORTC &= ~(1 << PC3);
-		//PORTC &= ~(1 << PC2);
-		//PORTC &= ~(1 << PC1);		//Setter de tre bit'ene til 0 ved initialisering, output til OLED command LAV.
-		//_delay_ms(1000);
-		//PORTC |= (1 << PC1);		//OUTPUT til OLED data LAV.
-		//_delay_ms(1000);
-		//PORTC &= ~(1 << PC1);		
-		//PORTC |= (1 << PC2);
-		//_delay_ms(100);
-		//PORTC &= ~(1 << PC2);
-		//PORTC |= (1 << PC3);
-		//_delay_ms(10);
-		//PORTC &= ~(1 << PC3);
-		*/
-		
 	}	
 	return 0;
 }
