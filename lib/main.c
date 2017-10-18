@@ -23,11 +23,8 @@
 
 
 
-volatile char *ADC_ptr = (char *) 0x1400;
-
 
 /*int get_string_size(int page, int line){
-
 	int length;
 	for(int i = 0; menu_options[page][line][i] != '\0'; ++i){
 		length = i;
@@ -49,7 +46,7 @@ void menu(){
 	int invertedIndex=0;
 	int direction;
 	while(1){
-		int y=read_y(ADC_ptr);
+		int y=read_y();
 	if(y>10){
 		oled_write_from_start_on_line(invertedIndex+1);
 		oled_write_string(string[invertedIndex],lenght[invertedIndex],0);
@@ -74,9 +71,6 @@ void menu(){
 */
 
 
-
-
-
 int main(){
 	uart_init(UBRR);
 	fdevopen(&uart_transmit, &uart_receive);
@@ -85,34 +79,20 @@ int main(){
 	MCUCR |= (1 << SRE);
 	oled_init();
 	interrupt_init();
-	DDRE |= (1 << PE1); // Setter PE høy med tanke på latchens virkemåte
-	DDRB &= ~(1 << PB1); // skal sette PB1 som input. Knapp på joystick.
+	DDRE |= (1 << PE1); // Setter PE høy med tanke på latchens virkemåte.
+	DDRB &= ~(1 << PB1); // Knapp på joystick som input.
+	
 	
 	//SPI_MasterInit();
 	mcp2515_Init();		//SPI_MasterInit kjøres inne i mcp2515_Init().
-	_delay_ms(100);
-	printf("Arild");
-	mcp2515_BitModify(MCP_CANCTRL, MODE_LOOPBACK, 0xFF); //Should set the CAN-controller in LoopBack Mode. 0x0f is the address of CANCTRL register, 0x40 is the Loopback register value.
-	printf("Robin");
+	mcp2515_BitModify(MCP_CANCTRL, 0xE0, MODE_LOOPBACK); //Should set the CAN-controller in LoopBack Mode. 0x0f is the address of CANCTRL register, 0x40 is the Loopback register value.
+	//mcp2515_Write(MCP_CANCTRL, MODE_LOOPBACK);		//Kan brukes på samme måte som BitModify for å sjekke hvilken mode can-controlleren er i.
 	//SRAM_test();
 	
 	volatile uint8_t *oled_command = 0x1000;
-	
 	volatile uint8_t *oled_data = 0x1200;
 	
-	
-	while(1){
-		uint8_t mode;
-		mode = mcp2515_Read(MCP_CANSTAT);
-		mode &= 0xE0;
-		if(mode == (0x00)){
-			printf("Normal mode");
-		}
-		else if(mode == (0x40)){
-			printf("Loopback mode");
-		}
-	}
-	
+	mcp2515_Write();
 	
 	/*for(int j = 0; j < 8; j++){
 		*oled_command = 0xB0 + j;
@@ -130,7 +110,7 @@ int main(){
 	oled_bright();
 	_delay_ms(1000);
 
-	menu_funct();
+	//menu_funct();		//Denne funksjonen er ikke helt ferdig implementert.
 	char* menu[]={"Meny      ","Edda      ","Arild     ","Robin     ","yo        ","h         ","e         ","i         "};
 	int numb_alt=8;
 
@@ -170,4 +150,3 @@ int main(){
 	}	
 	return 0;
 }
-

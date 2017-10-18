@@ -14,9 +14,9 @@
 ISR(INT2_vect);
 void interrupt_init();
 int button_pressed();
-int read_x(char *ADC_ptr);
-int read_y(char *ADC_ptr);
-int read_left(char *ADC_ptr);
-int read_right(char *ADC_ptr);
+int read_x();
+int read_y();
+int read_left();
+int read_right();
 
 #endif /* ADC_H_ */

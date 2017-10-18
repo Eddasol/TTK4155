@@ -6,17 +6,21 @@
  */ 
 
 #include <stdint.h>
+#include <avr/interrupt.h>
 
 #ifndef MPC2515_H_
 #define MPC2515_H_
 
+ISR(INT0_vect);
 void mcp2515_Init(void);
+int mcp2515_CheckInterrupt();
 uint8_t mcp2515_Read(uint8_t address);
 void mcp2515_Write(uint8_t address, uint8_t data);
 void mcp2515_RTS();
 uint8_t mcp2515_ReadStatus();
 void mcp2515_BitModify(uint8_t address, uint8_t maskbyte, uint8_t databyte);
 void mcp2515_Reset();
+void mcp2515_PrintMode();
 
 // Define MCP2515 register addresses
 
