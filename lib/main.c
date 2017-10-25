@@ -20,9 +20,7 @@
 #include "menu.h"
 #include "MCP2515.h"
 #include "spi.h"
-
-
-
+#include "can.h"
 
 /*int get_string_size(int page, int line){
 	int length;
@@ -31,7 +29,6 @@
 	}
 	return length;
 }*/
-
 /*
 void menu(){
 	oled_reset();
@@ -83,28 +80,30 @@ int main(){
 	DDRB &= ~(1 << PB1); // Knapp på joystick som input.
 	
 	
-	//SPI_MasterInit();
+	SPI_MasterInit();
 	mcp2515_Init();		//SPI_MasterInit kjøres inne i mcp2515_Init().
-	mcp2515_BitModify(MCP_CANCTRL, 0xE0, MODE_LOOPBACK); //Should set the CAN-controller in LoopBack Mode. 0x0f is the address of CANCTRL register, 0x40 is the Loopback register value.
+	can_Init();
+	//mcp2515_BitModify(MCP_CANCTRL, 0xE0, MODE_CONFIG); //Should set the CAN-controller in LoopBack Mode. 0x0f is the address of CANCTRL register, 0x40 is the Loopback register value.
+	mcp2515_BitModify(MCP_CANCTRL, 0xE0, MODE_LOOPBACK);
 	//mcp2515_Write(MCP_CANCTRL, MODE_LOOPBACK);		//Kan brukes på samme måte som BitModify for å sjekke hvilken mode can-controlleren er i.
-	//SRAM_test();
-	
+
 	volatile uint8_t *oled_command = 0x1000;
 	volatile uint8_t *oled_data = 0x1200;
-	
-	mcp2515_Write();
-	
-	/*for(int j = 0; j < 8; j++){
-		*oled_command = 0xB0 + j;
-		*oled_command = 0x00;
-		*oled_command = 0x10;
-		for (uint32_t i = 0; i < 8*128; i++) {
-			*oled_data = 0xFF;
-		}
+	_delay_ms(150);
+	while (1){
+		mcp2515_PrintMode();
 	}
-	*/
-	//menu();		
-
+	//menu();
+	
+	can_message_t* msg;
+	msg->data[0] = 0xed;
+	msg->data[1] = 0xa1;
+	msg->id = 0x1234;
+	msg->length = 2;
+	while(1){
+		can_messageSend(msg,MCP_TXB0CTRL);
+	}
+	
 
 	oled_reset();
 	oled_bright();
@@ -122,6 +121,7 @@ int main(){
 	}
 	oled_write_from_start_on_line(1);
 	oled_write_string(menu[1],10,1);
+	
 	int index=0;
 	while(1){
 		

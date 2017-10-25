@@ -13,11 +13,13 @@
 
 typedef struct can_message_t can_message_t;
 struct can_message_t{
-	uint8_t id;
+	uint16_t id;
 	uint8_t length;
 	uint8_t data[8];
 	};
 
-
+void can_Init();
+void can_sendMessage(can_message_t message);
+void can_read(can_message_t message);
 
 #endif /* CAN_H_ */

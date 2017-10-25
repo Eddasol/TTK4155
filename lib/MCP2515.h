@@ -22,6 +22,8 @@ void mcp2515_BitModify(uint8_t address, uint8_t maskbyte, uint8_t databyte);
 void mcp2515_Reset();
 void mcp2515_PrintMode();
 
+
+//#define DONT_CARE 0x00
 // Define MCP2515 register addresses
 
 #define MCP_RXF0SIDH	0x00
@@ -67,10 +69,17 @@ void mcp2515_PrintMode();
 #define MCP_CANINTF		0x2C
 #define MCP_EFLG		0x2D
 #define MCP_TXB0CTRL	0x30
+#define MCP_TXB0SIDH	0x31		// Transmit buffer 0 Standard Identifier High
+#define MCP_TXB0SIDL	0x32		// Transmit buffer 0 Standard Identifier Low
+#define MCP_TXB0DLC		0x35		// Transmit buffer 0 Data Length Code
+#define MCP_TXB0D0		0x36		// Transmit Buffer 0 Data Byte 0	
 #define MCP_TXB1CTRL	0x40
 #define MCP_TXB2CTRL	0x50
 #define MCP_RXB0CTRL	0x60
-#define MCP_RXB0SIDH	0x61
+#define MCP_RXB0SIDH	0x61		// Receive Buffer 0 Standard Identifier High
+#define MCP_RXB0SIDL	0x62		// Receive Buffer 0 Standard Identifier Low
+#define MCP_RXB0DLC		0x65		// Receive Buffer 0 Data Length Code
+#define MCP_RXB0D0		0x66		// Receive Buffer 0 Data Byte 0
 #define MCP_RXB1CTRL	0x70
 #define MCP_RXB1SIDH	0x71
 

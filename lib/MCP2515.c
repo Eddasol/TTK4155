@@ -17,20 +17,19 @@ ISR(INT0_vect){
 
 void mcp2515_Init(void){
 	DDRB |= (1 << PB4);		// Setter ChipSelect for Can Controlleren som output
-	SPI_MasterInit();
 	mcp2515_Reset();
 }
 
 int mcp2515_CheckInterrupt(){
 	int temp=mcp_interrupt_triggered;
-	mcp_interrupt_triggered=0
+	mcp_interrupt_triggered=0;
 	return temp;
 }
 
 uint8_t mcp2515_Read(uint8_t address){
 	uint8_t result;
 	PORTB &= ~(1 << PB4);	//Lower the CS pin of the can controller
-	SPI_MasterTransmit(MCP_WRITE);	//Read
+	SPI_MasterTransmit(MCP_READ);	//Read
 	SPI_MasterTransmit(address);
 	result = SPI_MasterTransmit(address);	//Sends "address" just to send something. Edda is don't care.
 	PORTB |= (1 << PB4);	//Put the CS pin high
