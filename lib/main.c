@@ -89,21 +89,24 @@ int main(){
 
 	volatile uint8_t *oled_command = 0x1000;
 	volatile uint8_t *oled_data = 0x1200;
-	_delay_ms(150);
-	while (1){
-		mcp2515_PrintMode();
-	}
+	
+	//while (1){
+	//	mcp2515_PrintMode();
+	//}
 	//menu();
 	
-	can_message_t* msg;
-	msg->data[0] = 0xed;
-	msg->data[1] = 0xa1;
-	msg->id = 0x1234;
-	msg->length = 2;
 	while(1){
-		can_messageSend(msg,MCP_TXB0CTRL);
+		
+		can_message_t* msg;
+		msg->data[0] = 0xEd;	// 0b 1110 1101 =			DECIMAL 237
+		msg->data[1] = 0xA1;	// 0b 1010 0001 =			DECIMAL 161
+		msg->id = 0x0444;		// 0b 0001 0010 0011 0100 = DECIMAL 4660
+		msg->length = 0x2;		// 0b 0010 =				DECIMAL 2
+		can_sendMessage(*msg);
+		can_print(can_read());
+		_delay_ms(100);
+		
 	}
-	
 
 	oled_reset();
 	oled_bright();

@@ -122,7 +122,7 @@ uint8_t can_pollInt(){
 		return MCP_RXB1CTRL;
 	}
 	abort();
-}*/
+}
 
 void can_print(can_message_t m){ //for debugging
 	printf("can_message_t(id:%d, len:%d, data:{", m.id, m.length);
@@ -134,3 +134,4 @@ void can_print(can_message_t m){ //for debugging
 	}
 	printf("})\n");
 }
+*/

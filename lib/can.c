@@ -13,8 +13,7 @@ void can_Init(){
 }
 
 void can_sendMessage(can_message_t message){
-	uint8_t idh = (message.id >> 3); 
-	uint8_t idl = (message.id << 5);
+
 	while(mcp2515_Read(MCP_TXB0CTRL) & (1 << MCP_TXREQ));
 	mcp2515_Write(MCP_TXB0SIDH, (message.id >> 3));				//Legger identiteten i høy og lav registeret til ID. (til sammen 11bit)
 	mcp2515_Write(MCP_TXB0SIDL, (uint8_t)(message.id << 5));
@@ -25,24 +24,26 @@ void can_sendMessage(can_message_t message){
 	mcp2515_RTS();
 }
 
-/*
-ID - H and L register
-Length - some bits in a register
-data[] - alot of shit
-*/
-
 can_message_t can_read(){
 	can_message_t message;
-	uint16_t idl;
-	uint16_t idh;
-	idh = mcp2515_Read(MCP_RXB0SIDH);
-	idl = mcp2515_Read(MCP_RXB0SIDL);
-	message.id = (idh << 3) | (idl >> 5);
+	message.id = ((mcp2515_Read(MCP_RXB0SIDH) << 3) | (mcp2515_Read(MCP_RXB0SIDL) >> 5));
 	message.length = mcp2515_Read(MCP_RXB0DLC);
 	
-	for (int i = 0; i<message.length;i++){
+	for (int i = 0; i < message.length; i++){
 		message.data[i] = mcp2515_Read(MCP_RXB0D0 + i);
 	}
+	mcp2515_BitModify(MCP_CANINTF, MCP_RX0IF, 0x00);
 	
 	return message;
+}
+
+void can_print(can_message_t message){
+	printf("CAN-bus message: (id:%x, len:%d, data:{", message.id, message.length);
+		if(message.length){
+			printf("%d", message.data[0]);
+		}
+		for(uint8_t i = 1; i < message.length; i++){
+			printf(", %d", message.data[i]);
+		}
+	printf("})\n");
 }

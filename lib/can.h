@@ -16,10 +16,12 @@ struct can_message_t{
 	uint16_t id;
 	uint8_t length;
 	uint8_t data[8];
-	};
+};
 
 void can_Init();
 void can_sendMessage(can_message_t message);
-void can_read(can_message_t message);
+can_message_t can_read();
+void can_print(can_message_t message);
+
 
 #endif /* CAN_H_ */
