@@ -13,11 +13,11 @@ void can_Init(){
 }
 
 void can_sendMessage(can_message_t message){
-
-	while(mcp2515_Read(MCP_TXB0CTRL) & (1 << MCP_TXREQ));
+	while(mcp2515_Read(MCP_TXB0CTRL) & (1 << MCP_TXREQ)){} /// noe rart her
 	mcp2515_Write(MCP_TXB0SIDH, (message.id >> 3));				//Legger identiteten i høy og lav registeret til ID. (til sammen 11bit)
 	mcp2515_Write(MCP_TXB0SIDL, (uint8_t)(message.id << 5));
-	mcp2515_Write(MCP_TXB0DLC, message.length);					//Setter datalengden i DLC registeret. (4 bit)
+	mcp2515_Write(MCP_TXB0DLC, message.length);			
+			//Setter datalengden i DLC registeret. (4 bit)
 	for (int i=0;i<message.length;i++){
 		mcp2515_Write(MCP_TXB0D0 + i, message.data[i]);
 	}	

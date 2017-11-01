@@ -5,7 +5,7 @@
  *  Author: eddas
  */ 
 
-
+//Husk å fjern optimalisering. JTAG on Atmel-ICE -> toolchain -> optimalizatoin -> endre flagget fra 01 til 00
 #ifndef CAN_H_
 #define CAN_H_
 

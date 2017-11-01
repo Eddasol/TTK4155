@@ -14,11 +14,29 @@
 
 
 
-int menustep(char* menu[], int size);
-struct menu make_menu();
+typedef struct menu menu;
 
-char* menu_control(struct menu current_menu);
+struct menu{
+
+	menu *parent;
+
+	menu *children[10];
+
+	int numb_children;
+
+	char name[20];
+
+};
+
 void menu_funct();
-void test();
+
+void make_menu(menu* newmenu, menu *_parent,menu **_children,int _numb_children,char* _name);
+void make_menu_only_name(menu* newmenu,char* _name);
+void addChildParent(menu* _parent, menu* _child);
+void addParentAsLastChild(menu* _menu);
+
+char* menu_control(menu* current_menu);
+int menustep(menu* _menu);
+menu* createAllMenu();
 
 #endif /* MENU_H_ */

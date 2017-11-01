@@ -1,10 +1,3 @@
-/*
- * byggern.c
- *
- * Created: 27.09.2017 17:00:29
- *  Author: eddas, robbas og arras
- */ 
-
 #define F_CPU 4915200UL
 #include <avr/io.h>
 #include <avr/interrupt.h>
@@ -66,7 +59,39 @@ void menu(){
 	
 	}
 */
+int* calculateJoystickPosition(can_message_t message){
+	int calculatedJoystickPositionData[2] = {-1000, -1000};
+	// if x position is supposed to have a negative value, set it negative
+	if(message.data[2] == 1){
+		calculatedJoystickPositionData[0] = message.data[0] - 256;	
+	}else{
+		calculatedJoystickPositionData[0] = message.data[0];
+	}
+	// if y position is supposed to have a negative value, set it negative
+	if(message.data[3] == 1){
+		calculatedJoystickPositionData[1] = message.data[1] - 256;
+	}else{
+		calculatedJoystickPositionData[1] = message.data[1];
+	}
+	return calculatedJoystickPositionData;
+}
 
+void joystickDriver() {
+	can_message_t* msgJoystickPosition;
+	msgJoystickPosition->data[0] = read_x();	// 0b 1110 1101 =			DECIMAL 237
+	msgJoystickPosition->data[1] = read_y();	// 0b 1010 0001 =			DECIMAL 161
+	msgJoystickPosition->data[2] = (read_x() < 0) ? 1 : 0;
+	msgJoystickPosition->data[3] = (read_y() < 0) ? 1 : 0;
+	msgJoystickPosition->id = 0x0000;		// 0b 0001 0010 0011 0100 = DECIMAL 4660
+	msgJoystickPosition->length = 0x2;		// 0b 0010 =				DECIMAL 2
+	
+	can_sendMessage(*msgJoystickPosition);
+	//can_print(can_read());
+	int* ls = calculateJoystickPosition(*msgJoystickPosition);
+	printf("%i, %i\n", ls[0], ls[1]);
+	//printf("%i\n", read_x());
+	_delay_ms(300);
+}
 
 int main(){
 	uart_init(UBRR);
@@ -94,48 +119,27 @@ int main(){
 	//	mcp2515_PrintMode();
 	//}
 	//menu();
-	
-	while(1){
+
+	/*while(1){
+		//can_message_t* msg;
+		//msg->data[0] = 0xEd;	// 0b 1110 1101 =			DECIMAL 237
+		//msg->data[1] = 0xA1;	// 0b 1010 0001 =			DECIMAL 161
+		//msg->id = 0x0444;		// 0b 0001 0010 0011 0100 = DECIMAL 4660
+		//msg->length = 0x2;		// 0b 0010 =				DECIMAL 2
+		//can_sendMessage(*msg);
+		//can_print(can_read());
 		
-		can_message_t* msg;
-		msg->data[0] = 0xEd;	// 0b 1110 1101 =			DECIMAL 237
-		msg->data[1] = 0xA1;	// 0b 1010 0001 =			DECIMAL 161
-		msg->id = 0x0444;		// 0b 0001 0010 0011 0100 = DECIMAL 4660
-		msg->length = 0x2;		// 0b 0010 =				DECIMAL 2
-		can_sendMessage(*msg);
-		can_print(can_read());
-		_delay_ms(100);
+		//_delay_ms(100);
 		
-	}
+	}*/
 
 	oled_reset();
 	oled_bright();
 	_delay_ms(1000);
 
-	//menu_funct();		//Denne funksjonen er ikke helt ferdig implementert.
-	char* menu[]={"Meny      ","Edda      ","Arild     ","Robin     ","yo        ","h         ","e         ","i         "};
-	int numb_alt=8;
-
-	oled_reset();
-	char* str = "hei";
-	for (int i=0; i< numb_alt;i++){
-		oled_write_from_start_on_line(i);
-		oled_write_string(menu[i],10,0);
-	}
-	oled_write_from_start_on_line(1);
-	oled_write_string(menu[1],10,1);
-	
-	int index=0;
+	menu_funct();		//Denne funksjonen er ikke helt ferdig implementert.
 	while(1){
-		
-
-		
-		index=menustep(menu,numb_alt);
-		if(button_pressed()){
-			printf("%s\n",menu[index]);
-			_delay_ms(200);
-		}
-		_delay_ms(100);		
+			
 
 		//oled_reset();
 		

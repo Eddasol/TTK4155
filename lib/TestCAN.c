@@ -19,7 +19,6 @@ void can_init(uint8_t operationMode){
 	mcp2515_BitModify(MCP_CANCTRL, MODE_MASK, operationMode);
 	//CAN_INT_PORT &= ~(1<<CAN_INT); //for can_pollInt()
 }
-
 //TODO: Should find a empty buffer by itself. No need for bufferselect. Should rather have priorities
 void can_messageSend(can_message_t* msg,uint8_t bufferSelect){
 	//transelate bufferSelect to bufferControl
@@ -36,7 +35,6 @@ void can_messageSend(can_message_t* msg,uint8_t bufferSelect){
 	else{
 		return; //if invalid bufferselect
 	}
-
 	//MCP_TXBnCTRL - Control Registers
 	//wait for the previous message to complete sending, TXREQ - Message transmit request bit. high if buffer is already waiting to send
 	while(mcp2515_Read(bufferSelect) & (1 << MCP_TXREQ)){}
@@ -123,7 +121,6 @@ uint8_t can_pollInt(){
 	}
 	abort();
 }
-
 void can_print(can_message_t m){ //for debugging
 	printf("can_message_t(id:%d, len:%d, data:{", m.id, m.length);
 	if(m.length){

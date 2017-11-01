@@ -13,148 +13,147 @@
 #define number_of_pages 1
 #define menu_items 3
 
-volatile char *ADCptr = (char *) 0x1400;
-
-/*char* menu_control(struct menu current_menu);
-struct menu set_options(int index,char* str, int size, struct menu name);
-struct menu init(int numb_opt,char* stringOptions[], int stringSizes[], struct menu nextMenus[], struct menu name);
-struct menu make_menu();
-int menustep(char* menu[], int size);
-*/
-const int length=10;
+const int length=20;
+char back[20]="back                ";
 int line_to_invert=1;
 
-
-struct menu
-{
-	int numb_options;
-	char* options[10];
-	struct menu* next[10];
-};
+#include <stdio.h>
 
 
-
-
-struct menu set_options(int index,char* str, int size, struct menu name){
-	char str1[10];
-	for (int i=0;i<size;i++){
-		str1[i]=str[i];
-	}
-	for (int i=size; i<10;i++){
-		str1[i]=' ';
-	}
-	name.options[index]=str1;
-	return name;
+void menu_funct(){
+	printf(menu_control(createAllMenu()),1);
 }
 
-struct menu init(int numb_opt,char* stringOptions[], int stringSizes[], struct menu *nextMenus[], struct menu name){
-	name.numb_options=numb_opt;
-	for (int i=0;i<numb_opt;i++){
-		set_options(i,stringOptions[i],stringSizes[i],name);
-		name.next[i]=nextMenus[i];
+void make_menu(menu* newmenu, menu *_parent,menu **_children,int _numb_children,char* _name){
+	newmenu->parent=_parent;
+	for (int i = 0; i<_numb_children;i++){
+		newmenu->children[i]=_children[i];
 	}
-	return name;
+	newmenu->numb_children=_numb_children;
+	int i=0;
+	while(_name[i]!='.'){
+		newmenu->name[i]=_name[i];
+		i+=1;
+	}
+	while(i<length){
+		newmenu->name[i]=' ';
+		i+=1;
+	}
 }
 
 
-struct menu first;
-struct menu Edda;
-struct menu Arild;
-struct menu Robin;
-struct menu empty;
-struct menu e;
-struct menu d;
-
-struct menu make_menu(){
-
-	struct menu fnext[]={empty,Edda,Robin,Arild};
-	char* fstr[]={"Hovedmeny","Edda","Robin","Arild"};
-	int fsize[]={9,4,5,5};
-	first = init(4,fstr,fsize,&fnext,first);
-	
-	struct menu Anext[]={empty};
-	char* Astr[]={"Arild"};
-	int Asize[]={5};
-	Arild = init(1,Astr,Asize,&Anext,Arild);
-	
-	char* Rstr[]={"Robin"};
-	Robin = init(1,Rstr,Asize,&Anext,Robin);
-	
-	struct menu Enext[]={empty,e,d};
-	char* Estr[]={"Edda","e","d"};
-	int Esize[]={4,1,1};
-	Edda = init(3,Estr,Esize,&Enext,Edda);
-	
-	char* estr[]={"e"};
-	int esize[]={1};
-	e=init(1,estr,esize,&Anext,e);
-	
-	char* dstr[]={"d"};
-	d=init(1,dstr,esize,&Anext,d);
-	return first;
+void make_menu_only_name(menu* newmenu,char* _name){
+	int i=0;
+	while(_name[i]!='.'){
+		newmenu->name[i]=_name[i];
+		i+=1;
+	}
+	while(i<length){
+		newmenu->name[i]=' ';
+		i+=1;
+	}
+	newmenu->numb_children=0;
 }
-	
 
 
-char* menu_control(struct menu current_menu){
+void addChildParent(menu* _parent, menu* _child){
+	_parent->children[_parent->numb_children]=_child;
+	_parent->numb_children+=1;
+	_child->parent=_parent;
+}
+
+
+void addParentAsLastChild(menu* _menu){
+	_menu->children[_menu->numb_children]=_menu;
+	_menu->numb_children+=1;
+}
+
+
+char* menu_control(menu* current_menu){
 	oled_reset();
-	if(current_menu.numb_options==1){
+	if(current_menu->numb_children==0){
 		printf ("return");
-		return current_menu.options[0];
+		return current_menu->name;
 	}
 	
-	for (int i=0; i< current_menu.numb_options;i++){
-		printf("%s\n",current_menu.options[i]);
-		_delay_ms(10);
-		oled_write_from_start_on_line(i);
-		oled_write_string(current_menu.options[i],length,0);
+	oled_write_from_start_on_line(0);//Printer overskrift
+	oled_write_string(current_menu->name,length,0);
+	for (int i=0; i< current_menu->numb_children;i++){
+		oled_write_from_start_on_line(i+1);
+		oled_write_string(current_menu->children[i]->name,length,0);//Printer alternativ
 	}
+	if(current_menu->parent!=NULL){
+		oled_write_from_start_on_line(current_menu->numb_children-1);
+		oled_write_string(back,length,0);//Legger til back som alternativ
+	}
+
 	oled_write_from_start_on_line(1);
-	oled_write_string(current_menu.options[1],length,1);
-	
-	int index;
-	
+	oled_write_string(current_menu->children[0]->name,length,1);//Velger linje 1 som valgt ved start
+	int index=0;
 	while(1){
-		index = menustep(current_menu.options, current_menu.numb_options);
+		index = menustep(current_menu);
 		if (button_pressed()){
-			_delay_ms(10);
+			
 			printf("Button pressed");
 			_delay_ms(500);
-			return menu_control(*current_menu.next[index]);
+			return menu_control(current_menu->children[index]);
 		}
 		_delay_ms(200);
 	}
 }
 
-void menu_funct(){
-	printf(menu_control(first));
-}
 
-int menustep(char* menu[], int size){
+int menustep(menu* _menu){
 	int direction = 0;
-	int joystick_Position = read_y(ADCptr);
-
+	int joystick_Position = read_y();
+	
 	if(joystick_Position > 20){
 		direction = 1;
 	}
-	
+
 	if(joystick_Position < -20){
 		direction = -1;
 	}
 	if(direction){
-	oled_write_from_start_on_line(line_to_invert);
-	oled_write_string(menu[line_to_invert],length,0);
-	line_to_invert = (line_to_invert-direction+size-1-1)%(size-1)+1;
-	oled_write_from_start_on_line(line_to_invert);
-	oled_write_string(menu[line_to_invert],length,1);
-	
+		oled_write_from_start_on_line(line_to_invert+1);
+		if (_menu->parent==_menu->children[line_to_invert]){
+			oled_write_string(back,length,0);	
+		}
+		else{
+			oled_write_string(_menu->children[line_to_invert]->name,length,0);
+		}
+		
+		line_to_invert = (line_to_invert-direction+_menu->numb_children)%(_menu->numb_children);
+		oled_write_from_start_on_line(line_to_invert+1);
+		if (_menu->parent==_menu->children[line_to_invert]){
+			oled_write_string(back,length,1);
+		}
+		else{
+			oled_write_string(_menu->children[line_to_invert]->name,length,1);
+		}
 	}
-	/*for(int line = 0; line < menu_items; line++){
-		int current_line_length = get_string_size(page,line);
-		oled_write_from_start_on_line(line);
-		(line == line_to_invert) ? oled_write_string(menu_options[0][line],current_line_length,1) : oled_write_string(menu_options[0][line],current_line_length,0);
-	}*/
-	
 	return line_to_invert;
 }
 
+
+menu* createAllMenu(){
+	menu *mainmenu=malloc(sizeof(menu));
+	menu *menu1=malloc(sizeof(menu));
+	menu *menu2=malloc(sizeof(menu));
+	menu *menu3=malloc(sizeof(menu));
+	menu *menu11=malloc(sizeof(menu));
+	menu *menu12=malloc(sizeof(menu));
+	make_menu_only_name(mainmenu,"mainmenu.");
+	make_menu_only_name(menu1,"menu1.");
+	make_menu_only_name(menu2,"menu2.");
+	make_menu_only_name(menu3,"menu3.");
+	make_menu_only_name(menu11,"menu11.");
+	make_menu_only_name(menu12,"menu12.");
+	addChildParent(mainmenu,menu1);
+	addChildParent(mainmenu,menu2);
+	addChildParent(mainmenu,menu3);
+	addChildParent(menu1,menu11);
+	addChildParent(menu1,menu12);
+	addParentAsLastChild(menu1);
+	return mainmenu;
+}

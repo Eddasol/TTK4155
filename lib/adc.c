@@ -43,6 +43,7 @@ int read_x(){
 	
 }
 
+
 int read_y(){
 	ADC_ptr[0]=0x04;
 	
