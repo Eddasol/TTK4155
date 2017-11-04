@@ -654,14 +654,14 @@ END GROUP
 .debug_pubnames
  *(.debug_pubnames)
 
-.debug_info     0x00000000     0x1843
+.debug_info     0x00000000     0x1842
  *(.debug_info .gnu.linkonce.wi.*)
  .debug_info    0x00000000      0xbbc C:/Program Files (x86)/Atmel/Studio/7.0/Packs/atmel/ATmega_DFP/1.2.150/gcc/dev/atmega2560/avr6/crtatmega2560.o
  .debug_info    0x00000bbc      0x37b lib/can.o
- .debug_info    0x00000f37      0x310 lib/main.o
- .debug_info    0x00001247      0x467 lib/MCP2515.o
- .debug_info    0x000016ae       0xb8 lib/spi.o
- .debug_info    0x00001766       0xdd lib/uart.o
+ .debug_info    0x00000f37      0x30f lib/main.o
+ .debug_info    0x00001246      0x467 lib/MCP2515.o
+ .debug_info    0x000016ad       0xb8 lib/spi.o
+ .debug_info    0x00001765       0xdd lib/uart.o
 
 .debug_abbrev   0x00000000     0x10f4
  *(.debug_abbrev)

@@ -30,9 +30,9 @@ int main(void){
 	//pwmDriver();
 	can_Init();		//CanInit funker pr 01.11.2017 ikke på Atmega2560'n
 	_delay_ms(100);
-	//mcp2515_BitModify(MCP_CANCTRL, 0xE0, MODE_CONFIG);		//Set mcp in config mode
-	//mcp2515_BitModify(MCP_CANCTRL, 0xE0, MODE_NORMAL);		//Set mcp in normal mode
-	mcp2515_BitModify(MCP_CANCTRL, 0xE0, MODE_LOOPBACK);		//Set mcp in loopback mode
+	//mcp2515_BitModify(MCP_CANCTRL, MODE_MASK, MODE_CONFIG);		//Set mcp in config mode
+	mcp2515_BitModify(MCP_CANCTRL, MODE_MASK, MODE_NORMAL);		//Set mcp in normal mode
+	//mcp2515_BitModify(MCP_CANCTRL, MODE_MASK, MODE_LOOPBACK);		//Set mcp in loopback mode
 	_delay_ms(100);
 	//mcp2515_Write(MCP_CANCTRL, MODE_LOOPBACK);		//Kan brukes på samme måte som BitModify for å sjekke hvilken mode can-controlleren er i.
 	
@@ -43,11 +43,12 @@ int main(void){
 	}
 	*/
 	
+	
 	while(1){
 		can_message_t* msg;
-		msg->data[0] = 0xEd;	// 0b 1110 1101				= DECIMAL 237
-		msg->data[1] = 0xA1;	// 0b 1010 0001				= DECIMAL 161
-		msg->id = 0x0044;		// 0b 0001 0010 0011 0100	= DECIMAL 4660
+		msg->data[0] = 0xFA;	// 0b 1110 1101				= DECIMAL 237
+		msg->data[1] = 0xA9;	// 0b 1010 0001				= DECIMAL 161
+		msg->id = 0x0052;		// 0b 0001 0010 0011 0100	= DECIMAL 4660
 		msg->length = 0x2;		// 0b 0010					= DECIMAL 2
 		can_sendMessage(*msg);
 		can_print(can_read());

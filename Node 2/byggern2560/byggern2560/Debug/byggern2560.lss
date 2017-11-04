@@ -15,11 +15,11 @@ Idx Name          Size      VMA       LMA       File off  Algn
                   CONTENTS, READONLY
   5 .debug_aranges 00000118  00000000  00000000  00000f9c  2**0
                   CONTENTS, READONLY, DEBUGGING
-  6 .debug_info   00001843  00000000  00000000  000010b4  2**0
+  6 .debug_info   00001842  00000000  00000000  000010b4  2**0
                   CONTENTS, READONLY, DEBUGGING
-  7 .debug_abbrev 000010f4  00000000  00000000  000028f7  2**0
+  7 .debug_abbrev 000010f4  00000000  00000000  000028f6  2**0
                   CONTENTS, READONLY, DEBUGGING
-  8 .debug_line   000009b9  00000000  00000000  000039eb  2**0
+  8 .debug_line   000009b9  00000000  00000000  000039ea  2**0
                   CONTENTS, READONLY, DEBUGGING
   9 .debug_frame  000002a0  00000000  00000000  000043a4  2**2
                   CONTENTS, READONLY, DEBUGGING
@@ -611,10 +611,9 @@ int main(void){
  3ae:	00 c0       	rjmp	.+0      	; 0x3b0 <main+0x3a>
  3b0:	00 00       	nop
 	_delay_ms(100);
-	//mcp2515_BitModify(MCP_CANCTRL, 0xE0, MODE_CONFIG);		//Set mcp in config mode
-	//mcp2515_BitModify(MCP_CANCTRL, 0xE0, MODE_NORMAL);		//Set mcp in normal mode
-	mcp2515_BitModify(MCP_CANCTRL, 0xE0, MODE_LOOPBACK);		//Set mcp in loopback mode
- 3b2:	40 e4       	ldi	r20, 0x40	; 64
+	//mcp2515_BitModify(MCP_CANCTRL, MODE_MASK, MODE_CONFIG);		//Set mcp in config mode
+	mcp2515_BitModify(MCP_CANCTRL, MODE_MASK, MODE_NORMAL);		//Set mcp in normal mode
+ 3b2:	40 e0       	ldi	r20, 0x00	; 0
  3b4:	60 ee       	ldi	r22, 0xE0	; 224
  3b6:	8f e0       	ldi	r24, 0x0F	; 15
  3b8:	79 d0       	rcall	.+242    	; 0x4ac <mcp2515_BitModify>
@@ -628,23 +627,23 @@ int main(void){
  3c8:	00 c0       	rjmp	.+0      	; 0x3ca <main+0x54>
  3ca:	00 00       	nop
  3cc:	0f 2e       	mov	r0, r31
-	}
 	*/
+	
 	
 	while(1){
 		can_message_t* msg;
-		msg->data[0] = 0xEd;	// 0b 1110 1101				= DECIMAL 237
- 3ce:	fd ee       	ldi	r31, 0xED	; 237
+		msg->data[0] = 0xFA;	// 0b 1110 1101				= DECIMAL 237
+ 3ce:	fa ef       	ldi	r31, 0xFA	; 250
  3d0:	af 2e       	mov	r10, r31
  3d2:	f0 2d       	mov	r31, r0
  3d4:	0f 2e       	mov	r0, r31
-		msg->data[1] = 0xA1;	// 0b 1010 0001				= DECIMAL 161
- 3d6:	f1 ea       	ldi	r31, 0xA1	; 161
+		msg->data[1] = 0xA9;	// 0b 1010 0001				= DECIMAL 161
+ 3d6:	f9 ea       	ldi	r31, 0xA9	; 169
  3d8:	bf 2e       	mov	r11, r31
  3da:	f0 2d       	mov	r31, r0
  3dc:	0f 2e       	mov	r0, r31
-		msg->id = 0x0044;		// 0b 0001 0010 0011 0100	= DECIMAL 4660
- 3de:	f4 e4       	ldi	r31, 0x44	; 68
+		msg->id = 0x0052;		// 0b 0001 0010 0011 0100	= DECIMAL 4660
+ 3de:	f2 e5       	ldi	r31, 0x52	; 82
  3e0:	cf 2e       	mov	r12, r31
  3e2:	f0 2d       	mov	r31, r0
  3e4:	91 2c       	mov	r9, r1
@@ -653,18 +652,18 @@ int main(void){
  3e8:	dd 24       	eor	r13, r13
  3ea:	d1 f8       	bld	r13, 1
  3ec:	e0 e0       	ldi	r30, 0x00	; 0
-	}
 	*/
+	
 	
 	while(1){
 		can_message_t* msg;
-		msg->data[0] = 0xEd;	// 0b 1110 1101				= DECIMAL 237
+		msg->data[0] = 0xFA;	// 0b 1110 1101				= DECIMAL 237
  3ee:	f0 e0       	ldi	r31, 0x00	; 0
  3f0:	a3 82       	std	Z+3, r10	; 0x03
  3f2:	b4 82       	std	Z+4, r11	; 0x04
-		msg->data[1] = 0xA1;	// 0b 1010 0001				= DECIMAL 161
+		msg->data[1] = 0xA9;	// 0b 1010 0001				= DECIMAL 161
  3f4:	ec 2c       	mov	r14, r12
-		msg->id = 0x0044;		// 0b 0001 0010 0011 0100	= DECIMAL 4660
+		msg->id = 0x0052;		// 0b 0001 0010 0011 0100	= DECIMAL 4660
  3f6:	c0 82       	st	Z, r12
  3f8:	91 82       	std	Z+1, r9	; 0x01
  3fa:	d2 82       	std	Z+2, r13	; 0x02
