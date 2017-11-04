@@ -32,13 +32,14 @@ int button_pressed(){
 }
 
 int read_x(){
-	ADC_ptr[0]=0x05;
 	
-	while(interrupt_triggered==0){	}
+	ADC_ptr[0] = 0x05;
+	
+	while(interrupt_triggered == 0){}
 	interrupt_triggered = 0;
 	
-	int x_value=ADC_ptr[0];
-	int x_pro=x_value*0.784314-100;//0.784..=200/255, ble feil om ikke gjort på denne måten
+	int x_value = ADC_ptr[0];
+	int x_pro = x_value*0.784314-100;		//0.784..=200/255, ble feil om ikke gjort på denne måten
 	return (x_pro);
 	
 }

@@ -18,6 +18,7 @@ struct can_message_t{
 	uint8_t data[8];
 };
 
+ISR(INT0_vect);
 void can_Init();
 void can_sendMessage(can_message_t message);
 can_message_t can_read();

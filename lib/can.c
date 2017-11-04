@@ -2,22 +2,27 @@
  * can.c
  *
  * Created: 18.10.2017 14:21:52
- *  Author: eddas
+ *  Author: eddas, arillas, robinas
  */ 
 
 #include "can.h"
 #include "MCP2515.h"
 
+volatile int can_message_received = 0;
+
+ISR(INT0_vect){
+	can_message_received = 1;
+}
+
 void can_Init(){
-	mcp2515_BitModify(MCP_RXB0CTRL, MCP_FILTER_MASK, 0xFF);		//Filter Off
+	mcp2515_BitModify(MCP_RXB0CTRL, MCP_FILTER_MASK, 0xFF);		// Filter Off
 }
 
 void can_sendMessage(can_message_t message){
-	while(mcp2515_Read(MCP_TXB0CTRL) & (1 << MCP_TXREQ)){} /// noe rart her
-	mcp2515_Write(MCP_TXB0SIDH, (message.id >> 3));				//Legger identiteten i høy og lav registeret til ID. (til sammen 11bit)
-	mcp2515_Write(MCP_TXB0SIDL, (uint8_t)(message.id << 5));
-	mcp2515_Write(MCP_TXB0DLC, message.length);			
-			//Setter datalengden i DLC registeret. (4 bit)
+	while(mcp2515_Read(MCP_TXB0CTRL) & (1 << MCP_TXREQ)){}		// noe rart her
+	mcp2515_Write(MCP_TXB0SIDH, (message.id >> 3));				// Legger identiteten i høy og lav registeret til ID. (til sammen 11bit)
+	mcp2515_Write(MCP_TXB0SIDL, (uint8_t)(message.id << 5));	// ------------||-------------	
+	mcp2515_Write(MCP_TXB0DLC, message.length);					// Setter datalengden i DLC registeret. (4 bit)
 	for (int i=0;i<message.length;i++){
 		mcp2515_Write(MCP_TXB0D0 + i, message.data[i]);
 	}	

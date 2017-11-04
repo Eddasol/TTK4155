@@ -5,7 +5,6 @@
 #include <util/delay.h>
 #include <stdio.h>
 
-
 #include "uart.h"
 #include "adc.h"
 #include "oled.h"
@@ -97,20 +96,20 @@ int main(){
 	uart_init(UBRR);
 	fdevopen(&uart_transmit, &uart_receive);
 	
-	SFIOR |= (1 << XMM2);
-	MCUCR |= (1 << SRE);
+	SFIOR |= (1 << XMM2);		//This has to be set in order to use the programming pins for JTAG as normal, which means that a 64kbit adress space cannot be reached.
+	MCUCR |= (1 << SRE);		
 	oled_init();
 	interrupt_init();
-	DDRE |= (1 << PE1); // Setter PE høy med tanke på latchens virkemåte.
-	DDRB &= ~(1 << PB1); // Knapp på joystick som input.
+	DDRE |= (1 << PE1);			// Setter PE høy med tanke på latchens virkemåte.
+	DDRB &= ~(1 << PB1);		// Sets joystick pushbutton as input
 	
 	
 	SPI_MasterInit();
-	mcp2515_Init();		//SPI_MasterInit kjøres inne i mcp2515_Init().
+	mcp2515_Init();
 	can_Init();
-	//mcp2515_BitModify(MCP_CANCTRL, 0xE0, MODE_CONFIG); //Should set the CAN-controller in LoopBack Mode. 0x0f is the address of CANCTRL register, 0x40 is the Loopback register value.
-	mcp2515_BitModify(MCP_CANCTRL, 0xE0, MODE_LOOPBACK);
-	//mcp2515_Write(MCP_CANCTRL, MODE_LOOPBACK);		//Kan brukes på samme måte som BitModify for å sjekke hvilken mode can-controlleren er i.
+	//mcp2515_BitModify(MCP_CANCTRL, MODE_MASK, MODE_LOOPBACK);
+	mcp2515_BitModify(MCP_CANCTRL, MODE_MASK, MODE_NORMAL);
+	//mcp2515_Write(MCP_CANCTRL, MODE_LOOPBACK);				//The mcp Write function can be used in the same way as the bitmodify in order to set the mode of the mcp. Here used for test purposes.
 
 	volatile uint8_t *oled_command = 0x1000;
 	volatile uint8_t *oled_data = 0x1200;
@@ -120,18 +119,17 @@ int main(){
 	//}
 	//menu();
 
-	/*while(1){
-		//can_message_t* msg;
-		//msg->data[0] = 0xEd;	// 0b 1110 1101 =			DECIMAL 237
-		//msg->data[1] = 0xA1;	// 0b 1010 0001 =			DECIMAL 161
-		//msg->id = 0x0444;		// 0b 0001 0010 0011 0100 = DECIMAL 4660
-		//msg->length = 0x2;		// 0b 0010 =				DECIMAL 2
-		//can_sendMessage(*msg);
-		//can_print(can_read());
+	while(1){
+		can_message_t* msg;
+		msg->data[0] = 0xEC;	// 0b 1110 1101 =			DECIMAL 237
+		msg->data[1] = 0xA0;	// 0b 1010 0001 =			DECIMAL 161
+		msg->id = 0x0032;		// 0b 0001 0010 0011 0100 = DECIMAL 4660
+		msg->length = 0x2;		// 0b 0010 =				DECIMAL 2
+		can_sendMessage(*msg);
+		can_print(can_read());
+		_delay_ms(100);
 		
-		//_delay_ms(100);
-		
-	}*/
+	}
 
 	oled_reset();
 	oled_bright();
