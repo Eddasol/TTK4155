@@ -10,7 +10,6 @@
 #define F_CPU 4915200UL
 #define BAUD 9600
 
-
 void uart_init(unsigned int baud){
 	
 	//UBRR1 = (unsigned char)51;

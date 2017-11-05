@@ -96,8 +96,8 @@ int main(){
 	uart_init(UBRR);
 	fdevopen(&uart_transmit, &uart_receive);
 	
-	SFIOR |= (1 << XMM2);		//This has to be set in order to use the programming pins for JTAG as normal, which means that a 64kbit adress space cannot be reached.
-	MCUCR |= (1 << SRE);		
+	SFIOR |= (1 << XMM2);		// This has to be set in order to use the programming pins for JTAG as normal, which means that a 64kbit address space cannot be reached.
+	MCUCR |= (1 << SRE);		// Enable External SRAM
 	oled_init();
 	interrupt_init();
 	DDRE |= (1 << PE1);			// Setter PE høy med tanke på latchens virkemåte.

@@ -15,7 +15,7 @@ typedef struct can_message_t can_message_t;
 struct can_message_t{
 	uint16_t id;
 	uint8_t length;
-	uint8_t data[8];
+	int8_t data[8];
 };
 
 ISR(INT0_vect);

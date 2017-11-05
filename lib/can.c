@@ -30,15 +30,17 @@ void can_sendMessage(can_message_t message){
 }
 
 can_message_t can_read(){
+	while(can_message_received == 0);
 	can_message_t message;
+	can_message_received = 0;
+		
 	message.id = ((mcp2515_Read(MCP_RXB0SIDH) << 3) | (mcp2515_Read(MCP_RXB0SIDL) >> 5));
 	message.length = mcp2515_Read(MCP_RXB0DLC);
-	
+		
 	for (int i = 0; i < message.length; i++){
 		message.data[i] = mcp2515_Read(MCP_RXB0D0 + i);
 	}
 	mcp2515_BitModify(MCP_CANINTF, MCP_RX0IF, 0x00);
-	
 	return message;
 }
 
