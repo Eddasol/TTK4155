@@ -11,7 +11,8 @@
 #define PWMDRIVER_H_
 
 void pwmDriver();
-
+void pwmDriverNy();
+void pwmDriver3(void);
 
 
 #endif /* PWMDRIVER_H_ */

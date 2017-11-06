@@ -32,7 +32,7 @@ can_message_t can_read(){
 	for (int i = 0; i < message.length; i++){
 		message.data[i] = mcp2515_Read(MCP_RXB0D0 + i);
 	}
-	mcp2515_BitModify(MCP_CANINTF, MCP_RX0IF, 0x00);
+	mcp2515_BitModify(MCP_CANINTF, 0xFF, 0x00);
 	
 	return message;
 }

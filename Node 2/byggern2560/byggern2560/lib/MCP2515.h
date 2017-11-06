@@ -190,4 +190,9 @@ void mcp2515_PrintMode();
 #define MCP_WAKIF		0x40
 #define MCP_MERRF		0x80
 
+//CANINTE Register Bits
+
+#define MCP_RX0IE		0x01			//Receive buffer 0 full interrupt enable bit, cleared by reseting the RX0IF bit in CANINTF
+#define MCP_TX0IE		0x04
+
 #endif /* MPC2515_H_ */
