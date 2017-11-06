@@ -11,7 +11,7 @@
 #ifndef MPC2515_H_
 #define MPC2515_H_
 
-ISR(INT0_vect);
+//ISR(INT0_vect);
 void mcp2515_Init(void);
 int mcp2515_CheckInterrupt();
 uint8_t mcp2515_Read(uint8_t address);
@@ -23,7 +23,7 @@ void mcp2515_Reset();
 void mcp2515_PrintMode();
 
 
-//#define DONT_CARE 0x00
+#define DONT_CARE 0x00
 // Define MCP2515 register addresses
 
 #define MCP_RXF0SIDH	0x00
@@ -189,5 +189,10 @@ void mcp2515_PrintMode();
 #define MCP_ERRIF		0x20
 #define MCP_WAKIF		0x40
 #define MCP_MERRF		0x80
+
+// CANINTF Register Bits
+
+#define MCP_RX0IE		0x01			// Receive buffer 0 full interrupt enable bit, cleared by MCP_RX0IF bit
+#define MCP_TX0IE		0x04
 
 #endif /* MPC2515_H_ */

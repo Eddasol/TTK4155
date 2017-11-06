@@ -5,7 +5,7 @@
  *  Author: eddas
  */ 
 
-
+/*
 #ifndef TESTCAN_H_
 #define TESTCAN_H_
 
@@ -25,4 +25,4 @@ can_message_t can_dataReceive(void);
 void can_print(can_message_t m);
 
 
-#endif /* TESTCAN_H_ */
+#endif /* TESTCAN_H_ */*/

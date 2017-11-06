@@ -15,10 +15,13 @@ typedef struct can_message_t can_message_t;
 struct can_message_t{
 	uint16_t id;
 	uint8_t length;
-	int8_t data[8];
+	uint8_t data[8];
 };
 
-ISR(INT0_vect);
+
+int get_can_message_received();
+void set_can_message_received();
+void clear_can_message_received();
 void can_Init();
 void can_sendMessage(can_message_t message);
 can_message_t can_read();

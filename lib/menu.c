@@ -21,7 +21,7 @@ int line_to_invert=1;
 
 
 void menu_funct(){
-	printf(menu_control(createAllMenu()),1);
+	printf(menu_control(createAllMenu()));
 }
 
 void make_menu(menu* newmenu, menu *_parent,menu **_children,int _numb_children,char* _name){
@@ -41,7 +41,6 @@ void make_menu(menu* newmenu, menu *_parent,menu **_children,int _numb_children,
 	}
 }
 
-
 void make_menu_only_name(menu* newmenu,char* _name){
 	int i=0;
 	while(_name[i]!='.'){
@@ -55,19 +54,16 @@ void make_menu_only_name(menu* newmenu,char* _name){
 	newmenu->numb_children=0;
 }
 
-
 void addChildParent(menu* _parent, menu* _child){
 	_parent->children[_parent->numb_children]=_child;
 	_parent->numb_children+=1;
 	_child->parent=_parent;
 }
 
-
 void addParentAsLastChild(menu* _menu){
 	_menu->children[_menu->numb_children]=_menu;
 	_menu->numb_children+=1;
 }
-
 
 char* menu_control(menu* current_menu){
 	oled_reset();
@@ -103,9 +99,11 @@ char* menu_control(menu* current_menu){
 }
 
 
+
+
 int menustep(menu* _menu){
 	int direction = 0;
-	int joystick_Position = read_y();
+	int joystick_Position = read_y()*0.784314-100;
 	
 	if(joystick_Position > 20){
 		direction = 1;

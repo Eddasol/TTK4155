@@ -10,15 +10,15 @@
 
 void SPI_MasterInit(void){
 	DDRB |= (1 << PB5) | (1 << PB7);	//Set MOSI and SCK as outputs
-	DDRB &= ~(1 << PB6); // MISO Input
+	DDRB &= ~(1 << PB6);				// MISO Input
 	SPCR |= (1 << SPE) | (1 << MSTR);	//Set MOSI and SCK output, all others input, SPIE-SPI interrupt enable, SPE-SPI Enable, MSTR-Master/Slave Select
 }
 
 uint8_t SPI_MasterTransmit(char data){
 	
-	SPDR = data;	//Start transmission
+	SPDR = data;						//Start transmission
 	
-	while(!(SPSR & (1 << SPIF)));	//Waits for a transfer to complete, SPIF is set when a serial transfer is complete. 
+	while(!(SPSR & (1 << SPIF)));		//Waits for a transfer to complete, SPIF is set when a serial transfer is complete. 
 	
 	return SPDR;
 	

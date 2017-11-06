@@ -5,7 +5,7 @@
  *  Author: eddas
  */ 
 
-#include "can.h"
+//#include "can.h"
 #include "mcp2515.h"
 #include "uart.h"
 #include <stdlib.h>
@@ -82,7 +82,7 @@ can_message_t can_dataReceive(void){
 	
 	return m;
 }*/
-
+/*
 can_message_t can_dataReceive(void){
 	//creating msg stuct. Also sets all elem to zero
 	can_message_t m = {0};
@@ -105,7 +105,7 @@ can_message_t can_dataReceive(void){
 	}
 
 	return m;
-}
+}*/
 /*
 uint8_t can_pollInt(){
 	//PD2 is set as input in can_init()

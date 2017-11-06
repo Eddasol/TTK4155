@@ -9,6 +9,7 @@
 
 volatile char *ADC_ptr = (char *) 0x1400;
 enum dir{LEFT, RIGHT, UP, DOWN, NEUTRAL};
+	
 volatile int interrupt_triggered = 0;
 
 ISR(INT2_vect){
@@ -39,8 +40,8 @@ int read_x(){
 	interrupt_triggered = 0;
 	
 	int x_value = ADC_ptr[0];
-	int x_pro = x_value*0.784314-100;		//0.784..=200/255, ble feil om ikke gjort på denne måten
-	return (x_pro);
+	//int x_pro = x_value*0.784314-100;		//0.784..=200/255, ble feil om ikke gjort på denne måten
+	return (x_value);//Hvis vi endrer fra x_pro til x_value kan verdien representres som en uint
 	
 }
 
@@ -52,8 +53,8 @@ int read_y(){
 	interrupt_triggered = 0;
 	
 	int y_value=ADC_ptr[0];
-	int y_pro=y_value*0.784314-100;
-	return (y_pro);
+	//int y_pro=y_value*0.784314-100;
+	return (y_value);
 }
 
 
