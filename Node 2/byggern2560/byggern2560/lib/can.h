@@ -10,6 +10,7 @@
 #define CAN_H_
 
 #include <stdint.h>
+#define SERVO_ID 0x0013
 
 typedef struct can_message_t can_message_t;
 struct can_message_t{

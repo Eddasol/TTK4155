@@ -6,13 +6,20 @@
  */ 
 
  #include <avr/io.h>
+ #include "can.h"
 
 #ifndef PWMDRIVER_H_
 #define PWMDRIVER_H_
 
-void pwmDriver();
-void pwmDriverNy();
-void pwmDriver3(void);
+#define PWM_MIN	15
+#define PWM_MAX	31
+#define PWM_MID	((PWM_MIN + PWM_MAX)/2)
 
+
+
+void pwm_Init(void);
+void pwm_setValue(uint8_t value);
+void pwm_test();
+void pwm_setServo(can_message_t msg);
 
 #endif /* PWMDRIVER_H_ */

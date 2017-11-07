@@ -5,52 +5,57 @@
  *  Author: Arild Stenset
  */ 
 
+ #define F_CPU 16000000UL
+ #include <util/delay.h>
+ #include <stdio.h>
  #include "pwm.h"
+ #include "can.h"
 
- void pwmDriver(){						//For høy nok oppløsning bør man benytte 16 bits timer i PWM.
-	 DDRH |= (1 << PH6);
-	 TCCR2B &= ~(1 << WGM22);
-	 TCCR2A |= (1 << WGM21) | (1 << WGM20);
-	 TCCR2A |= (1 << COM2B1) | (1 << COM2B0);		//MOtsatt for å kontrollere servo?
-	 TCCR2B |= (1 << CS22) | (1 << CS20);
-	 TCCR2B &= ~(1 << CS21);
-	 OCR2B = 0x14;
- }
+ void pwm_Init(void){
+	DDRE |= (1 << PE3);				// Pin #5 on the 2560 is pwm output
 
- void pwmDriverNy(){
-	 // Set pin PH6 as an output pin:
-	 DDRH |= (1 << PH6);
-	 
-	 // Set PWM - mode to 'Fast PWM Mode':
-	 TCCR2B |= (1 << WGM22) | (1 << WGM21) | (1 << WGM20);
-	 
-	 // Set PWM - signal to be active high:
-	 TCCR2A |= (1 << COM2B1) | (1 << COM2B0);
-	 
-	 // Set prescaler to equal 256:
-	 TCCR2B |= (1 << CS22) | (1 << CS21);
-	 TCCR2B &= ~(1 << CS20);
-	 
-	 // Set the PWM - frequency:
-	 OCR2B = 0x14;
- }
+	//fast pwm
+	TCCR3A &= ~(1<< WGM30);
+	TCCR3A |= (1<<WGM31);
+	TCCR3B |= (1<<WGM32) | (1<<WGM33);
+	
+	//non-inverting mode
+	TCCR3A &= ~(1<<COM3A0);			// Clear OCnA/OCnB/OCnC on compare match, set OCnA/OCnB/OCnC at BOTTOM (non-inverting mode)
+	TCCR3A |= (1<<COM3A1);			// -------------------------||-----------------------------
+	
+	//prescaler at 1024
+	TCCR3B |= (1<<CS30) | (1<<CS32);
+	TCCR3B &= ~(1<<CS31);
+	
+	ICR3 = 312;
+	
+	//pwm_setValue(PWM_MID);		//center servo on init
+}
 
- void pwmDriver3(void){
-	 // Set pin PH6 as an output pin:
-	 DDRE |= (1 << PE3);
-	 
-	 // Set PWM - mode to 'Fast PWM Mode':
-	 TCCR3A |= (1 << WGM33) | (1 << WGM32) | (1 << WGM31) | (1 << WGM20);
-	 
-	 // Set PWM - signal to be active high:
-	 TCCR3A |= (1 << COM3A1) | (1 << COM3A0);
-	 
-	 // Set prescaler to equal 256:
-	 TCCR2B |= (1 << CS32) | (1 << CS31);
-	 TCCR2B &= ~(1 << CS30);
-	 
-	 ICR3 = 312;
-	 
-	 // Set the PWM - frequency:
-	 OCR2B = 0x14;
- }
+void pwm_setValue(uint8_t value){
+	OCR3A = value;
+}
+
+void pwm_test(){
+	pwm_setValue(PWM_MIN);
+	_delay_ms(1000);
+	pwm_setValue(PWM_MAX);
+	_delay_ms(1000);
+}
+
+void pwm_setServo(can_message_t msg){
+	if (msg.id == SERVO_ID){									// servo.id = 0x0013
+		uint8_t value = (((msg.data[0]*16)/255) + PWM_MIN);		// Scaling of input from joystick
+
+		if((value <= PWM_MID+1) && (value >= PWM_MID-1)){
+			pwm_setValue(PWM_MID);
+		}
+		else if((value <= PWM_MAX) && (value >= PWM_MIN)){
+			pwm_setValue(value);
+		}
+		else{
+			pwm_setValue(PWM_MID);
+			printf("ELSE\n");
+		}
+	}
+}

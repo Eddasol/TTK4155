@@ -37,44 +37,45 @@ ISR(INT2_vect){
 }
 
 int main(void){
-
+	
 	uart_init(MYUBRR);
 	fdevopen(&uart_transmit, &uart_receive);
 	SPI_MasterInit();
 	mcp2515_Init();
-	//pwmDriver();
-	can_Init();		//CanInit funker pr 01.11.2017 ikke på Atmega2560'n
-	interrupt_Enable();
+	can_Init();
+	//interrupt_Enable();
 	//mcp2515_BitModify(MCP_CANCTRL, MODE_MASK, MODE_CONFIG);		//Set mcp in config mode
 	mcp2515_BitModify(MCP_CANCTRL, MODE_MASK, MODE_NORMAL);		//Set mcp in normal mode
 	//mcp2515_BitModify(MCP_CANCTRL, MODE_MASK, MODE_LOOPBACK);		//Set mcp in loopback mode
 	//mcp2515_Write(MCP_CANCTRL, MODE_LOOPBACK);		//Kan brukes på samme måte som BitModify for å sjekke hvilken mode can-controlleren er i.
-	
+	pwm_Init();
 	/*
 	while (1){
 		mcp2515_PrintMode();
 		_delay_ms(200);
 	}
 	*/
-	//pwmDriverNy();
-	pwmDriver3();
 
 	while(1){
 		can_message_t* msg;
 		msg->data[0] = 0x29;	// 0b 1110 1101				= DECIMAL 237
 		msg->data[1] = 0x12;	// 0b 1010 0001				= DECIMAL 161
-		msg->id = 0x0067;		// 0b 0001 0010 0011 0100	= DECIMAL 4660
+		msg->id = 0x0069;		// 0b 0001 0010 0011 0100	= DECIMAL 4660
 		msg->length = 0x2;		// 0b 0010					= DECIMAL 2
 		can_sendMessage(*msg);
 		
+		/*
 		if(can_message_received){
 			printf("Interrupt\n");
 			can_print(can_read());
 			can_message_received = 0;
 		}
-		
+		*/
+
+		//pwm_test();
+		pwm_setServo(can_read());
+		//_delay_ms(20);
 		//can_print(can_read());
-		//_delay_ms(100);
 	}
 	
 
