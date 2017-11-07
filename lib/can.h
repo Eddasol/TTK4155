@@ -5,7 +5,6 @@
  *  Author: eddas
  */ 
 
-//Husk å fjern optimalisering. JTAG on Atmel-ICE -> toolchain -> optimalizatoin -> endre flagget fra 01 til 00
 #ifndef CAN_H_
 #define CAN_H_
 
@@ -18,7 +17,6 @@ struct can_message_t{
 	uint8_t data[8];
 };
 
-
 int get_can_message_received();
 void set_can_message_received();
 void clear_can_message_received();
@@ -29,3 +27,7 @@ void can_print(can_message_t message);
 
 
 #endif /* CAN_H_ */
+
+// Collection of ID's
+
+#define SERVO_ID 0x0013

@@ -6,6 +6,7 @@
  */ 
 #include "can.h"
 #include "adc.h"
+
 /*
 int* calculateJoystickPosition(can_message_t message){
 	int calculatedJoystickPositionData[2] = {-1000, -1000};
@@ -26,12 +27,12 @@ int* calculateJoystickPosition(can_message_t message){
 
 void joystickDriver() {
 	can_message_t* msgJoystickPosition;
-	msgJoystickPosition->data[0] = read_x();	// 0b 1110 1101 =			DECIMAL 237
-	msgJoystickPosition->data[1] = read_y();	// 0b 1010 0001 =			DECIMAL 161
+	msgJoystickPosition->data[0] = read_x();
+	msgJoystickPosition->data[1] = read_y();
 	//msgJoystickPosition->data[2] = (read_x() < 0) ? 1 : 0;
 	//msgJoystickPosition->data[3] = (read_y() < 0) ? 1 : 0;
-	msgJoystickPosition->id = 0x00EA;		// 0b 0001 0010 0011 0100 = DECIMAL 4660
-	msgJoystickPosition->length = 0x2;		// 0b 0010 =				DECIMAL 2
+	msgJoystickPosition->id = SERVO_ID;							// ServoID = 0x0013
+	msgJoystickPosition->length = 0x2;
 	
 	can_sendMessage(*msgJoystickPosition);
 	//can_print(can_read());
@@ -39,4 +40,8 @@ void joystickDriver() {
 	//printf("%i, %i\n", ls[0], ls[1]);
 	//printf("%i\n", read_x());
 	//_delay_ms(300);
+}
+
+void joystick_Print_Values(){
+	printf("x: %d,\t y: %d\n", read_x(), read_y());
 }

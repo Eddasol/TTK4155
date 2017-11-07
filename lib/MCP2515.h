@@ -23,7 +23,8 @@ void mcp2515_Reset();
 void mcp2515_PrintMode();
 
 
-#define DONT_CARE 0x00
+#define DONT_CARE		0x00
+
 // Define MCP2515 register addresses
 
 #define MCP_RXF0SIDH	0x00
