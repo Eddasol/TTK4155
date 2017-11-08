@@ -8,6 +8,7 @@
 #include "MCP2515.h"
 #include "spi.h"
 #include <avr/io.h>
+#include <stdio.h>
 
 volatile int mcp_interrupt_triggered = 0;
 
@@ -16,8 +17,8 @@ ISR(INT0_vect){
 }
 
 void mcp2515_Init(void){
-	//DDRB |= (1 << PB7);		// Setter ChipSelect for Can Controlleren som output
 	mcp2515_Reset();
+	
 }
 
 int mcp2515_CheckInterrupt(){

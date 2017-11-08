@@ -12,43 +12,22 @@
 #include <util/delay.h>
 #include <stdio.h>
 
-#define BAUD 9600
-#define MYUBRR (F_CPU/16/BAUD - 1)		//If this doesn't work, set MYUBRR to 103. Check Table 22-12.
-
 #include "uart.h"
 #include "spi.h"
 #include "MCP2515.h"
 #include "can.h"
 #include "pwm.h"
+#include "init.h"
+#include "ir.h"
+#include "game.h"
+#include "adc.h"
 
 volatile int can_message_received = 0;
 
-void interrupt_Enable(){
-	mcp2515_BitModify(MCP_CANINTE, MCP_RX0IE, MCP_RX0IE);		// Enables interrupt on received can messages.
-	EIMSK |= (1 << INT2);				// Enable interrupt on INT2
-	EICRA |= (1 << ISC21);				// Interrupts on falling edge for mcp
-	EICRA &= ~(1 >> ISC20);				// Interrupts on falling edge for mcp
-	sei();								// Set global interrupt flag
-}
-
-ISR(INT2_vect){
-	can_message_received = 1;
-	printf("triggered\n");
-}
-
 int main(void){
-	
-	uart_init(MYUBRR);
+	initialize();
 	fdevopen(&uart_transmit, &uart_receive);
-	SPI_MasterInit();
-	mcp2515_Init();
-	can_Init();
-	//interrupt_Enable();
-	//mcp2515_BitModify(MCP_CANCTRL, MODE_MASK, MODE_CONFIG);		//Set mcp in config mode
-	mcp2515_BitModify(MCP_CANCTRL, MODE_MASK, MODE_NORMAL);		//Set mcp in normal mode
-	//mcp2515_BitModify(MCP_CANCTRL, MODE_MASK, MODE_LOOPBACK);		//Set mcp in loopback mode
-	//mcp2515_Write(MCP_CANCTRL, MODE_LOOPBACK);		//Kan brukes på samme måte som BitModify for å sjekke hvilken mode can-controlleren er i.
-	pwm_Init();
+	
 	/*
 	while (1){
 		mcp2515_PrintMode();
@@ -72,10 +51,12 @@ int main(void){
 		}
 		*/
 
-		//pwm_test();
-		pwm_setServo(can_read());
-		//_delay_ms(20);
+		//pwm_setServo(can_read());
 		//can_print(can_read());
+		uint8_t val = adc_read(IR_CHANNEL);
+		printf("ADC-value: %d\n", val);
+		_delay_ms(50);
+
 	}
 	
 
@@ -83,3 +64,7 @@ int main(void){
     return 0;
 }
 
+ISR(INT2_vect){
+	can_message_received = 1;
+	printf("triggered\n");
+}

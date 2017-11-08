@@ -5,6 +5,8 @@
  *  Author: eddas
  */ 
 
+ #include <stdio.h>
+
 #include "can.h"
 #include "MCP2515.h"
 
